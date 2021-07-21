@@ -1,0 +1,60 @@
+---
+- name: Install MySQL on Red Hat/CentOS 8 and Rocky Linux 8
+  hosts: all
+  become: yes
+  vars_files:
+    - vars/main.yml
+    - defaults/main.yml
+  tasks:
+    - name: Install MySQL packages
+      yum:
+        name: "{{ mysql_AWX_TOWER_packages }}"
+        state: present
+      tags: install_mysql
+
+    - name: Start MySQL service
+      service:
+        name: "{{ mysql_AWX_TOWER_srv }}"
+        state: started
+        enabled: true
+
+    - name: Set root password localhost
+      mysql_user:
+        name: "{{ mysql_AWX_TOWER_root_user }}"
+        host: localhost
+        update_password: on_create
+        password: "{{ mysql_AWX_TOWER_root_pass }}"
+        state: present
+        check_implicit_admin: yes
+        login_user: "{{ mysql_AWX_TOWER_root_user }}"
+        login_host: localhost
+        login_password: "{{ mysql_AWX_TOWER_root_pass }}"
+      tags: root_pass
+      notify:
+        - restart mysql
+
+    - name: Create New Database
+      mysql_db:
+        name: "{{ mysql_AWX_TOWER_new_db }}"
+        state: present
+        login_host: localhost
+        login_user: "{{ mysql_AWX_TOWER_root_user }}"
+        login_password: "{{ mysql_AWX_TOWER_root_pass }}"
+      tags: db_and_user
+
+    - name: Create New User
+      mysql_user:
+        name: "{{ mysql_AWX_TOWER_db_user }}"
+        password: "{{ mysql_AWX_TOWER_db_user_pass }}"
+        priv: '{{ mysql_AWX_TOWER_new_db }}.*:ALL'
+        host: "{{ mysql_AWX_TOWER_db_user_src }}"
+        login_host: localhost
+        login_user: "{{ mysql_AWX_TOWER_root_user }}"
+        login_password: "{{ mysql_AWX_TOWER_root_pass }}"
+      tags: db_and_user
+
+  handlers:
+    - name: restart mysql
+      service:
+        name: "{{ mysql_AWX_TOWER_srv }}"
+        state: restarted

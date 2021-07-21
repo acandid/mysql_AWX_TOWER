@@ -1,0 +1,7 @@
+---
+mysql_AWX_TOWER_packages:
+  - mysql-server
+  - python2-PyMySQL
+  - python3-PyMySQL
+
+mysql_AWX_TOWER_srv: mysqld

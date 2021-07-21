@@ -1,0 +1,12 @@
+---
+mysql_AWX_TOWER_root_user: root
+
+mysql_AWX_TOWER_root_pass: 123qwe
+
+mysql_AWX_TOWER_new_db: wordpress
+
+mysql_AWX_TOWER_db_user: almir
+
+mysql_AWX_TOWER_db_user_pass: 123qwe
+
+mysql_AWX_TOWER_db_user_src: '%'
