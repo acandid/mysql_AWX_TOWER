@@ -22,7 +22,6 @@
       mysql_user:
         name: "{{ mysql_AWX_TOWER_root_user }}"
         host: localhost
-        update_password: on_create
         password: "{{ mysql_AWX_TOWER_root_pass }}"
         state: present
         check_implicit_admin: yes
